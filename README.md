@@ -21,3 +21,8 @@ One modular platform, multiple configurations, and potentially a much more affor
 <img width="1151" height="667" alt="Screenshot 2026-10-29 at 01 35 14" src="https://github.com/user-attachments/assets/5912ed99-70e7-4c4c-960b-8cffb2f725ea" />
 
 Map Sensor Bosch-Sensor 0 281 002 401, mit der VW/Audi-Nummer 038 906 051 C. Das ist ein Drucksensor (MAP-Sensor).
+<img width="1117" height="820" alt="IMG_8566" src="https://github.com/user-attachments/assets/aa006e5a-8875-4a00-8534-7bc182425ed4" />
+
+<img width="1206" height="1284" alt="IMG_8584" src="https://github.com/user-attachments/assets/a1acd6d1-916a-4b0d-a786-7678f1085767" />
+
+
