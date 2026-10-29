@@ -1,14 +1,33 @@
 
-// Porsche 911 SC EFI Airbox
-// Reinforced perimeter mounting system
-// V-shaped six-pipe arrangement
-// Units: millimetres
+//
+// PORSCHE 911 SC EFI AIRBOX
+// MODULAR VERSION - SEPARATE STL EXPORT
+//
+// Units: mm
+//
 
 $fn = 96;
 
-// ============================================
-// PARAMETERS
-// ============================================
+// ==========================================
+// SELECT COMPONENT
+// ==========================================
+
+// "assembly"
+// "body"
+// "cover"
+// "throttle_flange"
+// "pipe_left_1"
+// "pipe_left_2"
+// "pipe_left_3"
+// "pipe_right_1"
+// "pipe_right_2"
+// "pipe_right_3"
+
+part = "assembly";
+
+// ==========================================
+// DIMENSIONS
+// ==========================================
 
 L = 300;
 W = 140;
@@ -20,33 +39,30 @@ wall = 4;
 flangeT = 10;
 lidT = 5;
 
-portOD = 44;
-portID = 36;
+portOD = 44;   // Outside diameter
+portID = 38;   // Inside diameter 911 SC 1978
 portLen = 35;
 
 topBore = 63;
 
-// ============================================
-// LID SCREW SYSTEM
-// ============================================
+// ==========================================
+// LID SCREWS
+// ==========================================
 
-lidScrewD = 5.5;  // M5 clearance
+lidScrewD = 5.5;
 
 bossD = 12;
 bossDepth = 8;
 
-// Preliminary insert dimensions.
-// Adjust to actual insert specification.
 insertPilotD = 6;
 insertDepth = 8;
 
-// Six screws along each long side
 screwX = [-125,-75,-25,25,75,125];
 screwY = [-61,61];
 
-// ============================================
+// ==========================================
 // THROTTLE FLANGE
-// ============================================
+// ==========================================
 
 throttleX = -92;
 throttleY = 0;
@@ -58,38 +74,34 @@ throttlePlateHeight = 8;
 throttleHoleDiameter = 6.5;
 throttleHoleOffset = 33;
 
-// ============================================
+// ==========================================
 // PIPE POSITIONS
-// ============================================
+// ==========================================
 
 pipeClearance = 7;
 
-outerZ = -35;
-middleZ = -64;
+outerZ = -30;   // Was -35
+middleZ = -60;  // Was -64
 
 outerX = sqrt(
-    pow(portOD + pipeClearance, 2) -
-    pow(middleZ - outerZ, 2)
+    pow(portOD + pipeClearance,2) -
+    pow(middleZ - outerZ,2)
 );
 
 ports = [
-    [-outerX, outerZ],
-    [0, middleZ],
-    [outerX, outerZ]
+    [-outerX,outerZ],
+    [0,middleZ],
+    [outerX,outerZ]
 ];
 
-// Select "assembly", "body", or "lid"
-
-part = "assembly";
-
-// ============================================
+// ==========================================
 // HELPERS
-// ============================================
+// ==========================================
 
 module rounded_rect(a,b,r) {
     hull() {
-        for (x=[-a/2+r,a/2-r])
-            for (y=[-b/2+r,b/2-r])
+        for(x=[-a/2+r,a/2-r])
+            for(y=[-b/2+r,b/2-r])
                 translate([x,y])
                     circle(r=r);
     }
@@ -107,20 +119,20 @@ module tapered_body(a,b,c,d,zTop,zBottom) {
     }
 }
 
-// ============================================
-// LID SCREW POSITIONS
-// ============================================
+// ==========================================
+// SCREW POSITIONS
+// ==========================================
 
 module lid_screw_positions() {
-    for (x=screwX)
-        for (y=screwY)
+    for(x=screwX)
+        for(y=screwY)
             translate([x,y,0])
                 children();
 }
 
-// ============================================
-// REINFORCEMENT BOSSES
-// ============================================
+// ==========================================
+// SCREW BOSSES
+// ==========================================
 
 module screw_bosses() {
     lid_screw_positions()
@@ -131,9 +143,9 @@ module screw_bosses() {
             );
 }
 
-// ============================================
-// BODY INSERT PILOT HOLES
-// ============================================
+// ==========================================
+// BODY INSERT HOLES
+// ==========================================
 
 module body_screw_holes() {
     lid_screw_positions()
@@ -144,9 +156,9 @@ module body_screw_holes() {
             );
 }
 
-// ============================================
-// LID SCREW CLEARANCE HOLES
-// ============================================
+// ==========================================
+// LID SCREW HOLES
+// ==========================================
 
 module lid_screw_holes() {
     lid_screw_positions()
@@ -157,9 +169,9 @@ module lid_screw_holes() {
             );
 }
 
-// ============================================
-// SIDE PIPES
-// ============================================
+// ==========================================
+// PIPE GEOMETRY
+// ==========================================
 
 module tube_outer(side,x,z) {
     translate([x,side*(W/2-7),z])
@@ -179,35 +191,39 @@ module tube_bore(side,x,z) {
             );
 }
 
-// ============================================
-// MAIN AIRBOX SHELL
-// ============================================
+// ==========================================
+// INDIVIDUAL PIPE
+// ==========================================
+
+module individual_pipe(side,index) {
+    p = ports[index];
+
+    difference() {
+        tube_outer(side,p[0],p[1]);
+        tube_bore(side,p[0],p[1]);
+    }
+}
+
+// ==========================================
+// MAIN BODY WITHOUT PIPES
+// ==========================================
 
 module airbox_shell() {
     difference() {
         union() {
 
-            // Tapered main housing
+            // Main tapered housing
             tapered_body(
                 L,W,
                 bottomL,W,
                 -flangeT,-H
             );
 
-            // Reinforced top flange
+            // Top flange
             translate([0,0,-flangeT])
                 linear_extrude(flangeT)
                     rounded_rect(
                         L+16,W+16,13
-                    );
-
-            // Six intake pipes
-            for (side=[-1,1])
-                for (p=ports)
-                    tube_outer(
-                        side,
-                        p[0],
-                        p[1]
                     );
         }
 
@@ -228,67 +244,82 @@ module airbox_shell() {
                     L-12,W-12,9
                 );
 
-        // Six continuous pipe bores
-        for (side=[-1,1])
-            for (p=ports)
+        // Pipe openings
+        for(side=[-1,1])
+            for(p=ports)
                 tube_bore(
-                    side,
-                    p[0],
-                    p[1]
+                    side,p[0],p[1]
                 );
     }
 }
 
-// ============================================
-// COMPLETE REINFORCED BODY
-// ============================================
+// ==========================================
+// COMPLETE BODY
+// ==========================================
 
 module airbox_body() {
     difference() {
         union() {
 
-            // Main hollow shell
             airbox_shell();
 
-            // Reinforcement bosses
             screw_bosses();
         }
 
-        // Blind pilot holes from top surface
         body_screw_holes();
+
+        // Keep pipe passages open
+        for(side=[-1,1])
+            for(p=ports)
+                tube_bore(
+                    side,p[0],p[1]
+                );
     }
 }
 
-// ============================================
-// THROTTLE FLANGE
-// ============================================
+// ==========================================
+// COVER
+// ==========================================
 
-module throttle_flange_plate() {
-    translate([
-        throttleX,
-        throttleY,
-        lidT
-    ])
-        linear_extrude(throttlePlateHeight)
+module cover_plate() {
+    difference() {
+
+        linear_extrude(lidT)
             rounded_rect(
-                throttlePlateSize,
-                throttlePlateSize,
-                throttlePlateRadius
+                L+16,W+16,13
             );
+
+        // Main throttle opening
+        translate([
+            throttleX,
+            throttleY,
+            -1
+        ])
+            cylinder(
+                d=topBore,
+                h=lidT+2
+            );
+
+        // Cover mounting holes
+        lid_screw_holes();
+
+        // Four throttle holes
+        throttle_mounting_holes();
+    }
 }
 
-// ============================================
+// ==========================================
 // THROTTLE MOUNTING HOLES
-// ============================================
+// ==========================================
 
 module throttle_mounting_holes() {
-    for (x=[
+    for(x=[
         -throttleHoleOffset,
-         throttleHoleOffset
+        throttleHoleOffset
     ])
-        for (y=[
+        for(y=[
             -throttleHoleOffset,
-             throttleHoleOffset
+            throttleHoleOffset
         ])
             translate([
                 throttleX+x,
@@ -301,49 +332,90 @@ module throttle_mounting_holes() {
                 );
 }
 
-// ============================================
-// COMPLETE LID
-// ============================================
+// ==========================================
+// SEPARATE THROTTLE FLANGE
+// ==========================================
 
-module lid_complete() {
+module throttle_flange() {
     difference() {
-        union() {
 
-            // Main lid plate
-            linear_extrude(lidT)
-                rounded_rect(
-                    L+16,W+16,13
-                );
-
-            // Flat throttle flange
-            throttle_flange_plate();
-        }
-
-        // 63 mm continuous throttle opening
         translate([
             throttleX,
             throttleY,
-            -1
+            lidT
+        ])
+            linear_extrude(
+                throttlePlateHeight
+            )
+                rounded_rect(
+                    throttlePlateSize,
+                    throttlePlateSize,
+                    throttlePlateRadius
+                );
+
+        // Main opening
+        translate([
+            throttleX,
+            throttleY,
+            lidT-1
         ])
             cylinder(
                 d=topBore,
-                h=lidT+throttlePlateHeight+2
+                h=throttlePlateHeight+2
             );
 
-        // Four throttle mounting holes
+        // Four mounting holes
         throttle_mounting_holes();
-
-        // Twelve lid mounting holes
-        lid_screw_holes();
     }
 }
 
-// ============================================
-// FINAL ASSEMBLY
-// ============================================
+// ==========================================
+// FULL ASSEMBLY
+// ==========================================
 
-if (part=="body" || part=="assembly")
+module full_assembly() {
+
     airbox_body();
 
-if (part=="lid" || part=="assembly")
-    lid_complete();
+    cover_plate();
+
+    throttle_flange();
+
+    for(side=[-1,1])
+        for(i=[0:2])
+            individual_pipe(side,i);
+}
+
+// ==========================================
+// EXPORT SELECTOR
+// ==========================================
+
+if(part=="assembly")
+    full_assembly();
+
+else if(part=="body")
+    airbox_body();
+
+else if(part=="cover")
+    cover_plate();
+
+else if(part=="throttle_flange")
+    throttle_flange();
+
+else if(part=="pipe_left_1")
+    individual_pipe(-1,0);
+
+else if(part=="pipe_left_2")
+    individual_pipe(-1,1);
+
+else if(part=="pipe_left_3")
+    individual_pipe(-1,2);
+
+else if(part=="pipe_right_1")
+    individual_pipe(1,0);
+
+else if(part=="pipe_right_2")
+    individual_pipe(1,1);
+
+else if(part=="pipe_right_3")
+    individual_pipe(1,2);
