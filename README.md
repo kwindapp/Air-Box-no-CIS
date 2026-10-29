@@ -1,7 +1,7 @@
 Project Air Werk Porsche 911 G Model .............
 
 Draft
-Map Sensor Bosch-Sensor 0 281 002 401, mit der VW/Audi-Nummer 038 906 051 C. Das ist ein Drucksensor (MAP-Sensor).
+
 Porsche 911 SC Airbox – Time for a Modern Solution!
 
 The original Porsche 911 SC airbox is a well-known weak point. Made using 1970s plastic technology, these parts are now over 40 years old and prone to cracking, especially from intake backfires.
@@ -20,3 +20,4 @@ One modular platform, multiple configurations, and potentially a much more affor
 
 <img width="1151" height="667" alt="Screenshot 2026-10-29 at 01 35 14" src="https://github.com/user-attachments/assets/5912ed99-70e7-4c4c-960b-8cffb2f725ea" />
 
+Map Sensor Bosch-Sensor 0 281 002 401, mit der VW/Audi-Nummer 038 906 051 C. Das ist ein Drucksensor (MAP-Sensor).
